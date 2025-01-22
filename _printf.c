@@ -95,29 +95,35 @@ int handle_specifier(const char *format, va_list args)
 {
     int count = 0;
 
+    if (*format == '%' && *(format + 1) == '\0')
+    {
+        return (count); /* No output for "%" alone */
+    }
+
     switch (*format)
     {
-        case 'c':
-            count += print_char(args);
-            break;
-        case 's':
-            count += print_string(args);
-            break;
-        case 'b':
-            count += print_binary(args);
-            break;
-        case '%':
-            count += _putchar('%');
-            break;
-        default:
-            count += _putchar('%');
-            count += _putchar(*format);
-            break;
+    case 'c':
+        count += print_char(args);
+        break;
+    case 's':
+        count += print_string(args);
+        break;
+    case 'd':
+    case 'i':
+        count += print_number(args);
+        break;
+    case '%':
+        count += _putchar('%');
+        break;
+    default:
+        count += _putchar('%');
+        count += _putchar(*format);
+        break;
     }
     return (count);
 }
 
-/**
+**
  * _printf - Produces output according to a format.
  * @format: The format string.
  *
