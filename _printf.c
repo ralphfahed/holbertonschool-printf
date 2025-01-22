@@ -1,6 +1,12 @@
 #include "main.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <limits.h>  /* For INT_MIN */
+
+/* Function prototypes */
+int print_char(va_list args);
+int print_string(va_list args);
+int print_number(va_list args);
 
 /**
  * _putchar - Writes a character to stdout.
@@ -10,7 +16,7 @@
  */
 int _putchar(char c)
 {
-    return (write(1, &c, 1));
+return (write(1, &c, 1));
 }
 
 /**
@@ -21,8 +27,8 @@ int _putchar(char c)
  */
 int print_char(va_list args)
 {
-    char c = va_arg(args, int);
-    return (_putchar(c));
+char c = va_arg(args, int);
+return (_putchar(c));
 }
 
 /**
@@ -33,55 +39,65 @@ int print_char(va_list args)
  */
 int print_string(va_list args)
 {
-    char *str = va_arg(args, char *);
-    int count = 0;
+char *str = va_arg(args, char *);
+int count = 0;
 
-    if (!str)
-        str = "(null)";
+if (!str)
+str = "(null)";
 
-    while (*str)
-    {
-        count += _putchar(*str);
-        str++;
-    }
-    return (count);
+while (*str)
+{
+count += _putchar(*str);
+str++;
+}
+return (count);
 }
 
 /**
- * print_binary - Converts an unsigned int to binary and prints it.
+ * print_number - Handles the %d and %i format specifiers.
  * @args: The argument list.
  *
  * Return: The number of characters printed.
  */
-int print_binary(va_list args)
+int print_number(va_list args)
 {
-    unsigned int n = va_arg(args, unsigned int);
-    int count = 0;
-    unsigned int mask;
-    int leading_zero = 1;
+int n = va_arg(args, int);
+int count = 0;
+char buffer[50];
+int i = 0;
 
-    if (n == 0)
-    {
-        count += _putchar('0');
-        return (count);
-    }
+if (n == 0)
+{
+count += _putchar('0');
+return (count);
+}
 
-    mask = 1 << (sizeof(n) * 8 - 1); /* Set mask to the highest bit */
-    while (mask)
-    {
-        if (n & mask)
-        {
-            leading_zero = 0;
-            count += _putchar('1');
-        }
-        else if (!leading_zero)
-        {
-            count += _putchar('0');
-        }
-        mask >>= 1; /* Shift mask right */
-    }
+if (n == INT_MIN)  /* Handle INT_MIN separately */
+{
+count += _putchar('-');
+count += _putchar('2');
+n = 147483648;  /* Adjust the number */
+}
 
-    return (count);
+if (n < 0)
+{
+count += _putchar('-');
+n = -n;
+}
+
+while (n > 0)
+{
+buffer[i] = (n % 10) + '0';
+n /= 10;
+i++;
+}
+
+while (i > 0)
+{
+count += _putchar(buffer[--i]);
+}
+
+return (count);
 }
 
 /**
@@ -93,37 +109,37 @@ int print_binary(va_list args)
  */
 int handle_specifier(const char *format, va_list args)
 {
-    int count = 0;
+int count = 0;
 
-    if (*format == '%' && *(format + 1) == '\0')
-    {
-        return (count); /* No output for "%" alone */
-    }
-
-    switch (*format)
-    {
-    case 'c':
-        count += print_char(args);
-        break;
-    case 's':
-        count += print_string(args);
-        break;
-    case 'd':
-    case 'i':
-        count += print_number(args);
-        break;
-    case '%':
-        count += _putchar('%');
-        break;
-    default:
-        count += _putchar('%');
-        count += _putchar(*format);
-        break;
-    }
-    return (count);
+if (*format == '%' && *(format + 1) == '\0')
+{
+return (count); /* No output for "%" alone */
 }
 
-**
+switch (*format)
+{
+case 'c':
+count += print_char(args);
+break;
+case 's':
+count += print_string(args);
+break;
+case 'd':
+case 'i':
+count += print_number(args);
+break;
+case '%':
+count += _putchar('%');
+break;
+default:
+count += _putchar('%');
+count += _putchar(*format);
+break;
+}
+return (count);
+}
+
+/**
  * _printf - Produces output according to a format.
  * @format: The format string.
  *
@@ -131,31 +147,31 @@ int handle_specifier(const char *format, va_list args)
  */
 int _printf(const char *format, ...)
 {
-    va_list args;
-    int i = 0, count = 0;
+va_list args;
+int i = 0, count = 0;
 
-    if (!format)
-        return (-1);
+if (!format)
+return (-1);
 
-    va_start(args, format);
+va_start(args, format);
 
-    while (format[i])
-    {
-        if (format[i] == '%')
-        {
-            i++;
-            if (format[i] == '\0')
-                break;
-            count += handle_specifier(&format[i], args);
-        }
-        else
-        {
-            count += _putchar(format[i]);
-        }
-        i++;
-    }
+while (format[i])
+{
+if (format[i] == '%')
+{
+i++;
+if (format[i] == '\0')
+break;
+count += handle_specifier(&format[i], args);
+}
+else
+{
+count += _putchar(format[i]);
+}
+i++;
+}
 
-    va_end(args);
-    return (count);
+va_end(args);
+return (count);
 }
 
