@@ -1,7 +1,6 @@
 #include "main.h"
 #include <unistd.h>
 #include <stdarg.h>
-
 /**
  * _putchar - Writes a character to stdout.
  * @c: The character to print.
@@ -10,9 +9,8 @@
  */
 int _putchar(char c)
 {
-    return (write(1, &c, 1));
+return (write(1, &c, 1));
 }
-
 /**
  * print_char - Handles the %c format specifier.
  * @args: The argument list.
@@ -21,10 +19,9 @@ int _putchar(char c)
  */
 int print_char(va_list args)
 {
-    char c = va_arg(args, int);
-    return (_putchar(c));
+char c = va_arg(args, int);
+return (_putchar(c));
 }
-
 /**
  * print_string - Handles the %s format specifier.
  * @args: The argument list.
@@ -33,20 +30,17 @@ int print_char(va_list args)
  */
 int print_string(va_list args)
 {
-    char *str = va_arg(args, char *);
-    int count = 0;
-
-    if (!str)
-        str = "(null)";
-
-    while (*str)
-    {
-        count += _putchar(*str);
-        str++;
-    }
-    return (count);
+char *str = va_arg(args, char *);
+int count = 0;
+if (!str)
+str = "(null)";
+while (*str)
+{
+count += _putchar(*str);
+str++;
 }
-
+return (count);
+}
 /**
  * handle_specifier - Handles format specifiers.
  * @format: The format string.
@@ -54,29 +48,27 @@ int print_string(va_list args)
  *
  * Return: The number of characters printed.
  */
-int handle_specifier(const char *format, va_list args)
+int handle_specifier(char format, va_list args)
 {
-    int count = 0;
-
-    switch (*format)
-    {
-        case 'c':
-            count += print_char(args);
-            break;
-        case 's':
-            count += print_string(args);
-            break;
-        case '%':
-            count += _putchar('%');
-            break;
-        default:
-            count += _putchar('%');
-            count += _putchar(*format);
-            break;
-    }
-    return (count);
+int count = 0;
+switch (format)
+{
+case 'c':
+count += print_char(args);
+break;
+case 's':
+count += print_string(args);
+break;
+case '%':
+count += _putchar('%');
+break;
+default:
+count += _putchar('%');
+count += _putchar(format);
+break;
 }
-
+return (count);
+}
 /**
  * _printf - Produces output according to a format.
  * @format: The format string.
@@ -85,31 +77,27 @@ int handle_specifier(const char *format, va_list args)
  */
 int _printf(const char *format, ...)
 {
-    va_list args;
-    int i = 0, count = 0;
-
-    if (!format)
-        return (-1);
-
-    va_start(args, format);
-
-    while (format[i])
-    {
-        if (format[i] == '%')
-        {
-            i++;
-            if (format[i] == '\0')
-                break;
-            count += handle_specifier(&format[i], args);
-        }
-        else
-        {
-            count += _putchar(format[i]);
-        }
-        i++;
-    }
-
-    va_end(args);
-    return (count);
+va_list args;
+int i = 0, count = 0;
+if (!format)
+return (-1);
+va_start(args, format);
+while (format[i])
+{
+if (format[i] == '%')
+{
+i++;
+if (format[i] == '\0')
+break;
+count += handle_specifier(format[i], args);
+}
+else
+{
+count += _putchar(format[i]);
+}
+i++;
+}
+va_end(args);
+return (count);
 }
 
