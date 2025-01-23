@@ -319,24 +319,17 @@ int handle_specifier(const char *format, va_list args)
 	case 'X':
 		count += print_hex_upper(args);
 		break;
-while (*format) {
-    if (*format == '%') {
-        switch (*(++format)) {
-        case '%':
-            count += _putchar('%');
-            break;
-        default:
-            count += _putchar('%');
-            count += _putchar(*format);
-            break;
-        }
-    } else {
-        count += _putchar(*format);
-    }
-    format++;
+	case '%':
+		count += _putchar('%');
+		break;
+	default:
+		count += _putchar('%');
+		count += _putchar(*format);
+		break;
+	}
+	return (count);
 }
-return (count);
-}
+
 /**
  * _printf - Produces output according to a format.
  * @format: The format string.
