@@ -321,13 +321,14 @@ int handle_specifier(const char *format, va_list args)
 		break;
 while (*format) {
     if (*format == '%') {
-        if (*(format + 1) == '%') {
+        switch (*(++format)) {
+        case '%':
             count += _putchar('%');
-            format++;
-        } else {
+            break;
+        default:
             count += _putchar('%');
-            count += _putchar(*(format + 1));
-            format++;
+            count += _putchar(*format);
+            break;
         }
     } else {
         count += _putchar(*format);
