@@ -1,6 +1,7 @@
 #include "main.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 /**
  * print_char - Prints a single character
@@ -37,6 +38,46 @@ int print_string(va_list args)
 }
 
 /**
+ * print_number - Prints an integer as a string
+ * @n: The integer to print
+ *
+ * Return: Number of characters printed
+ */
+int print_number(int n)
+{
+	char buffer[20];
+	int count = 0;
+	int i = 0;
+
+	if (n == 0)
+	{
+		count += write(1, "0", 1);
+		return (count);
+	}
+
+	if (n < 0)
+	{
+		count += write(1, "-", 1);
+		n = -n;
+	}
+
+	/* Store digits in reverse order */
+	while (n > 0)
+	{
+		buffer[i++] = (n % 10) + '0';
+		n /= 10;
+	}
+
+	/* Write the digits in the correct order */
+	while (--i >= 0)
+	{
+		count += write(1, &buffer[i], 1);
+	}
+
+	return (count);
+}
+
+/**
  * _printf - Produces output according to a format
  * @format: Format string containing characters and specifiers
  *
@@ -45,32 +86,35 @@ int print_string(va_list args)
 int _printf(const char *format, ...)
 {
 	int count = 0;
+	int i = 0;
 	va_list args;
 
 	if (!format)
 		return (-1);
 
 	va_start(args, format);
-	while (*format)
+	while (format[i])
 	{
-		if (*format == '%')
+		if (format[i] == '%')
 		{
-			format++;
-			if (*format == 'c')
+			i++;
+			if (format[i] == 'c')
 				count += print_char(args);
-			else if (*format == 's')
+			else if (format[i] == 's')
 				count += print_string(args);
-			else if (*format == '%')
+			else if (format[i] == 'd' || format[i] == 'i')
+				count += print_number(va_arg(args, int));
+			else if (format[i] == '%')
 				count += write(1, "%", 1);
 			else
 			{
 				count += write(1, "%", 1);
-				count += write(1, format, 1);
+				count += write(1, &format[i], 1);
 			}
 		}
 		else
-			count += write(1, format, 1);
-		format++;
+			count += write(1, &format[i], 1);
+		i++;
 	}
 	va_end(args);
 	return (count);
