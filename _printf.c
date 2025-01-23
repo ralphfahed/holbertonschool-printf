@@ -11,7 +11,6 @@
 int print_char(va_list args)
 {
 	char c = va_arg(args, int);
-
 	return (write(1, &c, 1));
 }
 
@@ -63,7 +62,10 @@ int _printf(const char *format, ...)
 			else if (*format == '%')
 				count += write(1, "%", 1);
 			else
-				return (-1);
+			{
+				count += write(1, "%", 1);
+				count += write(1, format, 1);
+			}
 		}
 		else
 		{
@@ -74,3 +76,4 @@ int _printf(const char *format, ...)
 	va_end(args);
 	return (count);
 }
+
