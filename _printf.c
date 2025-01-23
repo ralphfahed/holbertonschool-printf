@@ -11,6 +11,7 @@
 int print_char(va_list args)
 {
 	char c = va_arg(args, int);
+
 	return (write(1, &c, 1));
 }
 
@@ -68,9 +69,7 @@ int _printf(const char *format, ...)
 			}
 		}
 		else
-		{
 			count += write(1, format, 1);
-		}
 		format++;
 	}
 	va_end(args);
