@@ -43,11 +43,18 @@ int print_string(va_list args)
  *
  * Return: Number of characters printed
  */
+/**
+ * print_number - Prints an integer as a string
+ * @n: The integer to print
+ *
+ * Return: Number of characters printed
+ */
 int print_number(int n)
 {
 	char buffer[20];
 	int count = 0;
 	int i = 0;
+	unsigned int num;
 
 	if (n == 0)
 	{
@@ -58,14 +65,19 @@ int print_number(int n)
 	if (n < 0)
 	{
 		count += write(1, "-", 1);
-		n = -n;
+		/* Handle INT_MIN edge case */
+		num = (unsigned int)(-n);
+	}
+	else
+	{
+		num = n;
 	}
 
 	/* Store digits in reverse order */
-	while (n > 0)
+	while (num > 0)
 	{
-		buffer[i++] = (n % 10) + '0';
-		n /= 10;
+		buffer[i++] = (num % 10) + '0';
+		num /= 10;
 	}
 
 	/* Write the digits in the correct order */
